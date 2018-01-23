@@ -1,0 +1,4 @@
+name: inspec-oneview-integration-tests
+depends:
+  - name: oneview
+    path: ../../..

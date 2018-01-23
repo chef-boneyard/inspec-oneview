@@ -1,0 +1,17 @@
+.yardoc/
+docs/profile
+.byebug_history
+
+.envrc
+.ruby-version
+.direnv
+Gemfile.lock
+inspec.lock
+.kitchen
+*.plan
+*.tfstate*
+local
+.vscode
+.terraform
+
+conf

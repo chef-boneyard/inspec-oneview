@@ -7,6 +7,19 @@ require 'yard'
 # Include library for connecting to OneView
 require_relative 'libraries/oneview_backend'
 
+# `which` method to check that required binaries are available
+#
+def which(cmd)
+  exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exts.each { |ext| 
+      binary = File.join(path, format('%s%s', cmd, ext))
+      return binary if File.executable?(binary) && !File.directory?(binary)
+    }
+  end
+  return nil
+end
+
 # rubocop
 desc 'Run Rubocop lint checks'
 task :rubocop do
@@ -32,6 +45,12 @@ namespace :test do
   integration_tests_dir = File.join(File.dirname(__FILE__), 'test', 'integration')
   working_dir = File.join(integration_tests_dir, 'build')
 
+  # Ensure that the terraform binary is available
+  cmd_available = which('terraform')
+  if cmd_available.nil?
+    abort "Terraform not found in the PATH. Please ensure it is installed and in the PATH"
+  end
+
   # Initialize the terraform workspace
   task :init_workspace do
     cmd = format('cd %s && terraform init', working_dir)
@@ -46,6 +65,7 @@ namespace :test do
     config = oneview_backend.config
 
     puts '----> Setup'
+    puts working_dir
 
     Dir.chdir(working_dir) do
       # Create the plan to be applied to OneView

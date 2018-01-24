@@ -28,6 +28,7 @@ class OneviewEthernetNetwork < OneviewResourceBase
   #
   # @return Value of the attribute that has been called
   def method_missing(method_id)
+    byebug
     # determine the name of the method to call, by converting the id to camelCase
     method_name = camel_case(method_id)
 
@@ -52,7 +53,7 @@ class OneviewEthernetNetwork < OneviewResourceBase
   # within the InSpec profile
   #
   # @return bool
-  def be_private_network?
-    privateNetwork
+  def private_network?
+    send('privateNetwork')
   end
 end

@@ -6,12 +6,12 @@ control 'oneview-generic-ethernet-network-1.0' do
 
   describe oneview_generic_resource(type: 'ethernet-networks', name: 'InSpec-Ethernet-Network') do
     its('type') { should cmp 'ethernet-networkV300' }
-    its('ethernet_network_type') { should cmp 'Tagged' }
-    its('vlan_id') { should eq 1 }
-    its('smart_link') { should be false }
+    its('ethernetNetworkType') { should cmp 'Tagged' }
+    its('vlanId') { should eq 1 }
+    its('smartLink') { should be false }
     its('purpose') { should cmp 'General' }
-    its('private_network') { should be false }
-    its('subnet_uri') { should be nil }
+    its('privateNetwork') { should be false }
+    its('subnetUri') { should be nil }
     its('state') { should cmp 'Active' }
     its('status') { should cmp 'OK' }
     its('category') { should cmp 'ethernet-networks' }

@@ -5,7 +5,7 @@ control 'oneview-ethernet-network-1.0' do
   title 'Ensure that the Ethernet Network is configured correctly'
 
   describe oneview_ethernet_network(name: 'InSpec-Ethernet-Network') do
-    it{ should be_private_network }
+    it{ should_not be_private_network }
 
     its('type') { should cmp 'ethernet-networkV300' }
     its('ethernet_network_type') { should cmp 'Tagged' }

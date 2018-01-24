@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'oneview-sdk'
+require 'inspec'
 
 # Class to manage the connection to Oneview to retrieve information about the resources
 #
@@ -96,7 +97,7 @@ class OneviewResourceBase < Inspec.resource(1)
       # Create the dynamic methods for each of the attributes that have been returned
       dm = OneviewResourceDynamicMethods.new
       dm.create_methods(self, resources.first)
-    else
+    elsif resources.count > 1
 
       # create dynamic methods for each of the attributes that have been returned
       dm = OneviewResourceDynamicMethods.new

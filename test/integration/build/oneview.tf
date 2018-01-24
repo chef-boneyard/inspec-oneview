@@ -1,6 +1,5 @@
 # Configure variables
 variable "oneview_username" {}
-
 variable "oneview_password" {}
 variable "oneview_endpoint" {}
 

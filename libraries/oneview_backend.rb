@@ -25,7 +25,7 @@ class OneviewConnection
       @config = OneviewSDK::Config.load(oneview_settings_file)
     else
       @config = nil
-      warn format('%s was not found or is not accessible', oneview_settings_file)
+      abort format('%s was not found or is not accessible', oneview_settings_file)
     end
   end
 

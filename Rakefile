@@ -47,11 +47,44 @@ namespace :test do
 
     puts '----> Setup'
 
-    # Create the plan to be applied to OneView
     Dir.chdir(working_dir) do
-      cmd = format("terraform plan -var 'oneview_username=%s' -var 'oneview_password=%s' -var 'oneview_endpoint=%s' -out inspec-oneview.plan", config['user'], config['password'], config['url'])
+      # Create the plan to be applied to OneView
+      cmd = format('terraform plan -var "oneview_username=%s" -var "oneview_password=%s" -var "oneview_endpoint=%s" -out inspec-oneview.plan', config['user'], config['password'], config['url'])
+      sh(cmd)
+
+      # apply the plan 
+      cmd = 'terraform apply inspec-oneview.plan'
       sh(cmd)
     end
+  end
+
+  task :run_integration_tests do
+    puts "----> Run"
+
+    cmd = format("chef exec inspec exec %s/verify", integration_tests_dir)
+    sh(cmd)
+  end
+
+  task :cleanup_integration_tests do
+    # get the connection information for the Oneview instance
+    oneview_backend = OneviewConnection.new
+    config = oneview_backend.config
+
+    puts '----> CLeanup'   
+    
+    Dir.chdir(working_dir) do
+      cmd = format('terraform destroy -force -var "oneview_username=%s" -var "oneview_password=%s" -var "oneview_endpoint=%s"', config['user'], config['password'], config['url'])
+      sh(cmd)
+    end
+  end
+
+  desc 'Perform Integration Tests'
+  task :integration do 
+    Rake::Task["test:init_workspace"].execute
+    Rake::Task["test:cleanup_integration_tests"].execute
+    Rake::Task["test:setup_integration_tests"].execute
+    Rake::Task["test:run_integration_tests"].execute
+    Rake::Task["test:cleanup_integration_tests"].execute    
   end
 
 end

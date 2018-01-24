@@ -98,9 +98,34 @@ Rake tasks have been configured to allow the easy execution of the integration t
 ```bash
 rake lint               # Run the robocop linter
 rake rubocop            # Run Rubocop lint checks
-rake test:integration   # Perform Integration tests
 ```
 
 # Profile Class Documentation
 
-Documentation can be generated for the profile using `yardoc`. A rake task has been 
+Documentation can be generated for the profile using `yardoc`. A rake task has been created which will run the Yard generator and create the documentation in `docs/profile`.
+
+```bash
+rake yard
+```
+
+Once the documentation has been generated view it by going to [file://docs/profile/index.html](file://docs/profile/index.html).
+
+## License
+
+|  |  |
+| ------ | --- |
+| **Author:** | Russell Seymour (<russell@chef.io>) |
+| **Copyright:** | Copyright (c) 2018 Chef Software Inc. |
+| **License:** | Apache License, Version 2.0 |
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

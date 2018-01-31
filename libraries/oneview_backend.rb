@@ -119,6 +119,14 @@ class OneviewResourceBase < Inspec.resource(1)
     data = data.to_s if data.is_a? Symbol
     data.split('_').inject([]) { |buffer, e| buffer.push(buffer.empty? ? e : e.capitalize) }.join
   end
+
+  def snake_case(data)
+    data.gsub(/::/, '/')
+        .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+        .gsub(/([a-z\d])([A-Z])/,'\1_\2')
+        .tr("-", "_")
+        .downcase
+  end
 end
 
 # Class to creae methods on the calling object at run time

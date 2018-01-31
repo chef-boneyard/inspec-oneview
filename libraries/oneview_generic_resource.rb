@@ -5,7 +5,7 @@ require 'oneview_backend'
 class OneviewGenericResource < OneviewResourceBase
   name 'oneview_generic_resource'
 
-  desc ' InSpec resource to interrogate any resource type in OneView'
+  desc 'InSpec resource to interrogate any resource type in OneView'
 
   attr_accessor :probes, :filter
 

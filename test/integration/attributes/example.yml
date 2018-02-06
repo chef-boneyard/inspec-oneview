@@ -1,0 +1,5 @@
+# Define example attributes to be used in tests
+rom_version_attr: I37 v2.52 (10/25/2017)
+mp_firmware_version_attr: 2.55 Aug 16 2017
+power_state_attr: On
+server_count: 10

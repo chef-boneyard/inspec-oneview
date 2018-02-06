@@ -7,7 +7,7 @@ class OneviewServers < OneviewResourceBase
 
   desc 'InSpec resource to test multiple servers'
 
-  attr_accessor :probes
+  attr_accessor :probes, :rom_version_regex
 
   # Define the filter table for the resoucre
   filter = FilterTable.create
@@ -42,6 +42,7 @@ class OneviewServers < OneviewResourceBase
         .add('profile_network_settings_state')
         .add('refresh_state')
         .add('rom_version')
+        .add('rom_version_type')
         .add('serial_number')
         .add('server_group_uri')
         .add('server_hardware_type_uri')
@@ -68,6 +69,9 @@ class OneviewServers < OneviewResourceBase
     opts[:type] = 'server-hardware'
     super(opts)
 
+    # Set the rom version regular expression to extract out the item
+    @rom_version_regex = '^([^\s]+)\s([^\s]+)?\s?\(?(.*?)\)?$'
+
     # find the servers
     resources
   end
@@ -80,9 +84,16 @@ class OneviewServers < OneviewResourceBase
     # the parsed data
     resource.each do |key, value|
       parsed[snake_case(key)] = value
+
+      # if the key is romVersion break it out into constituent parts
+      if key == 'romVersion'
+        components = value.match(rom_version_regex).captures
+
+        # add in the different components so they can be tested
+        parsed[format('%s_type', snake_case(key))] = components[0]
+      end
     end
 
     parsed
   end
-  
 end

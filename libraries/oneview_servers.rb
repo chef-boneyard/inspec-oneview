@@ -13,7 +13,7 @@ class OneviewServers < OneviewResourceBase
   filter = FilterTable.create
   filter.add_accessor(:where)
         .add_accessor(:entries)
-        .add(:exists?) { |x| x.entries.empty? }
+        .add(:exists?) { |x| !x.entries.empty? }
         .add('asset_tag')
         .add('category')
         .add('created')
@@ -43,6 +43,9 @@ class OneviewServers < OneviewResourceBase
         .add('refresh_state')
         .add('rom_version')
         .add('rom_version_type')
+        .add('rom_version_type_version')
+        .add('rom_version_version')
+        .add('rom_version_date')
         .add('serial_number')
         .add('server_group_uri')
         .add('server_hardware_type_uri')
@@ -70,7 +73,8 @@ class OneviewServers < OneviewResourceBase
     super(opts)
 
     # Set the rom version regular expression to extract out the item
-    @rom_version_regex = '^([^\s]+)\s([^\s]+)?\s?\(?(.*?)\)?$'
+    # @rom_version_regex = '^([^\s]+)\s([^\s]+)?\s?\(?(.*?)\)?$'
+    @rom_version_regex = '^(?<type>\S+)\s+(?:(?<version>\S+)\s+\((?<date>\S+)\)|(?<date>\S+))$'
 
     # find the servers
     resources
@@ -87,10 +91,17 @@ class OneviewServers < OneviewResourceBase
 
       # if the key is romVersion break it out into constituent parts
       if key == 'romVersion'
-        components = value.match(rom_version_regex).captures
+        components = value.match(rom_version_regex).named_captures
 
         # add in the different components so they can be tested
-        parsed[format('%s_type', snake_case(key))] = components[0]
+        parsed[format('%s_type', snake_case(key))] = components['type']
+
+        # add another parameter that is the type version
+        parsed[format('%s_type_version', snake_case(key))] = Gem::Version.new(components['type'].gsub(/[^0-9.]/, ''))
+
+        # Strip the v off the version so that it can be turned into a comparable version number
+        parsed[format('%s_version', snake_case(key))] = components['version'].nil? ? nil : Gem::Version.new(components['version'].gsub(/[^0-9.]/, ''))
+        parsed[format('%s_date', snake_case(key))] = DateTime.strptime(components['date'], '%m/%d/%Y')
       end
     end
 

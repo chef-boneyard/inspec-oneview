@@ -30,7 +30,22 @@ control 'oneview-servers-1.0' do
     its('name') { should eq [] }
   end
 
+  describe oneview_servers.where { rom_version_type_version < Gem::Version.new('40') } do
+    its('name') { should eq [] }
+  end
+
   describe oneview_servers.where { mp_firmware_version != mp_firmware_version_attr } do
     its('name') { should eq [] }
+  end
+
+  target_date = Date.parse('2017-10-25')
+  describe oneview_servers.where { rom_version_date < target_date } do
+    its('rom_version_date') { should eq [] }
+    its('name') { should eq [] }
+  end
+
+  # output all servers that are currently turned off
+  describe oneview_servers.where { status == 'Critical' } do
+    it { should_not exist }
   end
 end

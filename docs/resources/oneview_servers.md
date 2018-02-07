@@ -177,6 +177,20 @@ Indicates if the resource is currently refreshing. Possible values are NotRefres
 
 The version of the server hardware firmware (ROM). After updating the ROM (BIOS) firmware for a server, the server hardware page and the REST API may report an inaccurate ROM version until the server is next powered on and allowed to complete the power-on self-test (POST).
 
+This version is normally in the following format:
+
+`Ixx vx.xx mm/dd/YYYY` which maps onto `type version date`
+
+The resource will split these out into components that can be tested indivdually.
+
+#### rom_version_type
+
+Returns the first part of the version component. This refers to the system type.
+
+#### rom_version_version
+
+Returns the version component. To make it easier to compare version numbers 
+
 ### serial_number
 
 Serial number of the server hardware

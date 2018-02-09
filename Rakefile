@@ -107,4 +107,7 @@ namespace :test do
     Rake::Task["test:cleanup_integration_tests"].execute    
   end
 
+  # Create new resource skeleton files
+
+
 end

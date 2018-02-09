@@ -110,6 +110,25 @@ rake yard
 
 Once the documentation has been generated view it by going to [file://docs/profile/index.html](file://docs/profile/index.html).
 
+# Contributing
+
+To contribute to the resource, please clone the repo make your changes and create a PR.
+
+To aid in creating new resources, a Thor task has been created. The syntax of this command is:
+
+```
+thor generate:resource NAME DESCRIPTION TYPE [--multiple]
+```
+
+| Name | Description | Required? | Default Value | Example |
+|---|---|---|---|---|
+| NAME | Name of the resource | Y | | `oneview_server_profile` |
+| DESCRIPTION | A descriptionof the resource that will be displayed in InSpec output | Y | | | 
+| TYPE | The type of resource in the OneView API | Y | | `server-profiles` |
+| multiple | State if multiple objects are to be returned and a FilterTable should be created | N | false | |
+
+This will create a new resource with the specified name in `/libraries`.
+
 ## License
 
 |  |  |

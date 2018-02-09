@@ -5,4 +5,5 @@ gem 'oneview-sdk'
 group :development do
   gem 'byebug'
   gem 'yard'
+  gem 'thor'
 end

@@ -28,6 +28,27 @@ class OneviewServerProfile < OneviewResourceBase
     resources
   end
 
+  # Missing method function which will get the snake_case method name and
+  # check too see if tyhe attribute exists using the camelCase equivalent which is
+  # what HP OneView returns
+  #
+  # @param symbol method_id The symbole of the methods that has been called
+  #
+  # @return [var] Value of the item that has been called
+  def method_missing(method_id)
+    # depedning on the method that has been called, determine what value should be returned
+    bios_attrs = %w{ manage_bios }
+
+    # determine the attrute to call
+    method_name = camel_case(method_id)
+
+    byebug
+  end
+
+  def respond_to_missing?(*)
+    true
+  end
+
   def parse_resource(resource)
     # Create a hash to hold the parsed data
     parsed = {}

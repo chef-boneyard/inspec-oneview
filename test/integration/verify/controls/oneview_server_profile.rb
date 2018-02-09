@@ -9,5 +9,7 @@ control 'oneview-server-profile-1.0' do
 
   describe oneview_server_profile(name: server_profile_name) do
     its('affinity') { should cmp 'Bay' }
+    its('bios.manage_bios') { should be false }
+    byebug
   end
 end

@@ -91,21 +91,33 @@ The following resources are available in the InSpec Oneview Profile
 
 # Integration Testing
 
-Our intergration tests spin up resources in Oneview using Terraform and the results are verified by InSpec. The `test/integration/verify/controls` directory contains all of the tests that are run during the integration tests. These can be used as examples of how to use this resource pack.
+Our integration tests spin up resources in Oneview using Terraform and the results are verified by InSpec. The `test/integration/verify/controls` directory contains all of the tests that are run during the integration tests. These can be used as examples of how to use this resource pack.
 
-Rake tasks have been configured to allow the easy execution of the integration tests:
+In order to run the integration tests the HPE OneView Terraform provider needs to be installed. However this is not as simple as downloading it as it needs to be compiled using Go. Please review the [README](https://github.com/HewlettPackard/terraform-provider-oneview) for the HPE OneView Terraform Provider to see how this is accomplished.
+
+Thor tasks have been configured to allow the easy execution of the integration tests:
 
 ```bash
-rake lint               # Run the robocop linter
-rake rubocop            # Run Rubocop lint checks
+thor lint:rubocop               # Run the robocop linter
+thor test:integration           # Run Rubocop lint checks
+```
+
+The `test:integration` task will run all of the following in order, however these can be called manually in order if required.
+
+```bash
+thor test:init_workspace
+thor test:cleanup
+thor test:setup_integration
+thor test:execute
+thor test:cleanup
 ```
 
 # Profile Class Documentation
 
-Documentation can be generated for the profile using `yardoc`. A rake task has been created which will run the Yard generator and create the documentation in `docs/profile`.
+Documentation can be generated for the profile using `yardoc`. A Thor task has been created which will run the Yard generator and create the documentation in `docs/profile`.
 
 ```bash
-rake yard
+thor docs:create
 ```
 
 Once the documentation has been generated view it by going to [file://docs/profile/index.html](file://docs/profile/index.html).

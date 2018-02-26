@@ -37,12 +37,17 @@ class OneviewServerProfile < OneviewResourceBase
   # @return [var] Value of the item that has been called
   def method_missing(method_id)
     # depedning on the method that has been called, determine what value should be returned
-    bios_attrs = %w{ manage_bios }
+    bios_attrs = %w{ manage_bios overridden_settings }
+    boot_attrs = %w{ manage_boot order }
 
     # determine the attrute to call
     method_name = camel_case(method_id)
 
-    byebug
+    if bios_attrs.include?(method_id.to_s)
+      bios.send(method_name)
+    elsif boot_attrs.include?(method_id.to_s)
+      boot.send(method_name)
+    end
   end
 
   def respond_to_missing?(*)
@@ -61,5 +66,17 @@ class OneviewServerProfile < OneviewResourceBase
 
     # return the pased hash to the calling function
     parsed
+  end
+
+  def has_managed_bios?
+    bios.manageBios
+  end
+
+  def has_bios_overrides?
+    bios.overriddenSettings.empty? ? false : true
+  end
+
+  def has_managed_boot?
+    boot.manageBoot
   end
 end

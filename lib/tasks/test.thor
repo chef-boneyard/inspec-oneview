@@ -3,8 +3,8 @@ require_relative '../../libraries/oneview_backend'
 class Test < Thor
   attr_reader :integration_tests_dir, :working_dir
 
-  desc 'integration', 'Perform integration tests'
-  def integration
+  def initialize(*args)
+    super
     # Set the necessary directories
     @integration_tests_dir = File.join(File.dirname(__FILE__), '..', '..', 'test', 'integration')
     @working_dir = File.join(integration_tests_dir, 'build')
@@ -12,17 +12,22 @@ class Test < Thor
     # Ensure that the terraform binary is available
     cmd_available = which('terraform')
     abort 'Terraform not found in the PATH. Please ensure it is installed and in the PATH' if cmd_available.nil?
+  end
 
+  desc 'integration', 'Perform integration tests'
+  def integration
     init_workspace
     setup_integration
     execute
+    cleanup
   end
 
   desc 'init_workspace', 'Initialize the Terraform workspace'
   def init_workspace
     say '----> Initialising', :green
     cmd = format('cd %s && terraform init', working_dir)
-    `#{cmd}`
+    result = `#{cmd}`
+    say result
   end
 
   desc 'setup_integration', 'Setup the infrastructure for the Integration tests'
@@ -37,11 +42,13 @@ class Test < Thor
     Dir.chdir(working_dir) do
       # Create the plan to be applied to OneView
       cmd = format('terraform plan -var "oneview_username=%s" -var "oneview_password=%s" -var "oneview_endpoint=%s" -out inspec-oneview.plan', config['user'], config['password'], config['url'])
-      `#{cmd}`
+      result = `#{cmd}`
+      say result
 
       # apply the plan
       cmd = 'terraform apply inspec-oneview.plan'
-      `#{cmd}`
+      result = `#{cmd}`
+      say result
     end
   end
 
@@ -49,7 +56,8 @@ class Test < Thor
   def execute
     say '----> Executing Tests', :green
     cmd = format('chef exec inspec exec %s/verify', integration_tests_dir)
-    `#{cmd}`
+    result = `#{cmd}`
+    say result
   end
 
   desc 'cleanup', 'Remove infrastructure created for integration tests'
@@ -62,7 +70,8 @@ class Test < Thor
     
     Dir.chdir(working_dir) do
       cmd = format('terraform destroy -force -var "oneview_username=%s" -var "oneview_password=%s" -var "oneview_endpoint=%s"', config['user'], config['password'], config['url'])
-      `#{cmd}`
+      result = `#{cmd}`
+      say result
     end    
   end
 

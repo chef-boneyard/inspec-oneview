@@ -175,9 +175,16 @@ class OneviewResourceDynamicMethods
       object.define_singleton_method name do
         value
       end
+    when 'Hash'
+      value.count.zero? ? return_value = value : return_value = OneviewResourceProbe.new(value)
+      object.define_singleton_method name do
+        return_value
+      end
     when 'Array'
       # Check the first element data type
       case value[0].class.to_s
+      when 'String', 'Integer', 'TrueClass', 'FalseClass', 'Fixnum', 'NilClass'
+        probes = value  
       when 'Hash'
         probes = []
         value.each do |value_item|

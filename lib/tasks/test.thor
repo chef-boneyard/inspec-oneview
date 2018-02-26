@@ -67,12 +67,12 @@ class Test < Thor
     config = oneview_backend.config
 
     say '----> Cleanup', :green
-    
+
     Dir.chdir(working_dir) do
       cmd = format('terraform destroy -force -var "oneview_username=%s" -var "oneview_password=%s" -var "oneview_endpoint=%s"', config['user'], config['password'], config['url'])
       result = `#{cmd}`
       say result
-    end    
+    end
   end
 
   private

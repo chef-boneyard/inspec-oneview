@@ -53,6 +53,8 @@ Style/ConditionalAssignment:
   Enabled: false
 Style/BracesAroundHashParameters:
   Enabled: false
+Style/SingleLineBlockParams:
+  Enabled: false
 Style/AndOr:
   Enabled: false
 Style/Not:

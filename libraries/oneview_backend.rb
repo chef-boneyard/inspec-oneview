@@ -122,9 +122,9 @@ class OneviewResourceBase < Inspec.resource(1)
 
   def snake_case(data)
     data.gsub(/::/, '/')
-        .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
-        .gsub(/([a-z\d])([A-Z])/,'\1_\2')
-        .tr("-", "_")
+        .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+        .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+        .tr('-', '_')
         .downcase
   end
 end
@@ -176,7 +176,7 @@ class OneviewResourceDynamicMethods
         value
       end
     when 'Hash'
-      value.count.zero? ? return_value = value : return_value = OneviewResourceProbe.new(value)
+      value.count == 0 ? return_value = value : return_value = OneviewResourceProbe.new(value)
       object.define_singleton_method name do
         return_value
       end
@@ -184,7 +184,7 @@ class OneviewResourceDynamicMethods
       # Check the first element data type
       case value[0].class.to_s
       when 'String', 'Integer', 'TrueClass', 'FalseClass', 'Fixnum', 'NilClass'
-        probes = value  
+        probes = value
       when 'Hash'
         probes = []
         value.each do |value_item|

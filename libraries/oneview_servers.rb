@@ -56,11 +56,11 @@ class OneviewServers < OneviewResourceBase
         .add('state_reason')
         .add('status')
         .add('type')
-        .add('uri')        
+        .add('uri')
         .add('uuid')
         .add('virtual_serial_number')
         .add('virtual_uuid')
-        
+
   filter.connect(self, :probes)
 
   # Constructor for the resource. This calls the parent constructor
@@ -90,19 +90,19 @@ class OneviewServers < OneviewResourceBase
       parsed[snake_case(key)] = value
 
       # if the key is romVersion break it out into constituent parts
-      if key == 'romVersion'
-        components = value.match(rom_version_regex).named_captures
+      next unless key == 'romVersion'
 
-        # add in the different components so they can be tested
-        parsed[format('%s_type', snake_case(key))] = components['type']
+      components = value.match(rom_version_regex).named_captures
 
-        # add another parameter that is the type version
-        parsed[format('%s_type_version', snake_case(key))] = Gem::Version.new(components['type'].gsub(/[^0-9.]/, ''))
+      # add in the different components so they can be tested
+      parsed[format('%s_type', snake_case(key))] = components['type']
 
-        # Strip the v off the version so that it can be turned into a comparable version number
-        parsed[format('%s_version', snake_case(key))] = components['version'].nil? ? nil : Gem::Version.new(components['version'].gsub(/[^0-9.]/, ''))
-        parsed[format('%s_date', snake_case(key))] = DateTime.strptime(components['date'], '%m/%d/%Y')
-      end
+      # add another parameter that is the type version
+      parsed[format('%s_type_version', snake_case(key))] = Gem::Version.new(components['type'].gsub(/[^0-9.]/, ''))
+
+      # Strip the v off the version so that it can be turned into a comparable version number
+      parsed[format('%s_version', snake_case(key))] = components['version'].nil? ? nil : Gem::Version.new(components['version'].gsub(/[^0-9.]/, ''))
+      parsed[format('%s_date', snake_case(key))] = DateTime.strptime(components['date'], '%m/%d/%Y')
     end
 
     parsed

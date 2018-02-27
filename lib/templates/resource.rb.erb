@@ -22,7 +22,7 @@ class <%= class_name %> < OneviewResourceBase
   # to get the generic resource for the all the servers in OneView.
   #
   def initialize(opts = {})
-    # The generic resource needs to know what is being sought, in this case it is 'server-hardware'
+    # The generic resource needs to know what is being sought, for example 'server-hardware'
     opts[:type] = '<%= type %>'
     super(opts)
 

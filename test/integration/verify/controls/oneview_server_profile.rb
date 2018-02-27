@@ -23,14 +23,14 @@ control 'oneview-server-profile-1.0' do
     its('affinity') { should cmp affinity }
     its('order') { should include boot_order }
     its('order') { should eq [boot_order] }
-    its('template_compliance') { should be template_compliance }
+    its('template_compliance') { should cmp template_compliance }
     its('enclosure_bay') { should be 1 }
     its('mac_type') { should cmp 'Virtual' }
     its('wwn_type') { should cmp 'Virtual' }
     its('serial_number_type') { should cmp 'Virtual' }
-    its('category') { should be 'server-profiles' }
-    its('status') { should be 'OK' }
-    its('state') { should be 'Normal' }
+    its('category') { should eq 'server-profiles' }
+    its('status') { should eq 'OK' }
+    its('state') { should eq 'Normal' }
     its('in_progress') { should be false }
     its('pxe_boot_policy') { should cmp 'Auto' }
     its('mode') { should cmp boot_mode }

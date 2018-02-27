@@ -26,7 +26,7 @@ where
 * `property` is an attribute returned by OneView
 * `value` is the expected value of the attribute
 
-All attriubutes are referenced using camel_case, whereas the API will return snakeCase attributes.
+All attriubutes are referenced using camelCase, whereas the API will return snake_case attributes.
 
 ## Testers
 

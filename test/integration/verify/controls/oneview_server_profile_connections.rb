@@ -8,7 +8,13 @@ control 'oneview-server-profile-connections-1.0' do
   title 'Ensure that the specified profile has the correct connections'
 
   describe oneview_server_profile_connections(name: server_profile_name).where(id: 1) do
-    byebug
+    its('function_type') { should cmp 'Ethernet' }
     its('deployment_status') { should cmp 'Deployed' }
+    its('requested_vfs') { should cmp 'Auto' }
+    its('allocated_vfs') { should cmp 64 }
+    its('wwpn_type') { should cmp 'Virtual' }
+    its('wwnn') { should cmp nil }
+
+    its('boot.priority') { should cmp 'Primary' }
   end
 end

@@ -13,23 +13,24 @@ class OneviewServerProfileConnections < OneviewResourceBase
   filter.add_accessor(:where)
         .add_accessor(:entries)
         .add(:exists?) { |x| !x.entries.empty? }
-        .add('id')
-        .add('name')
-        .add('function_type')
-        .add('deployment_status')
-        .add('network_uri')
-        .add('port_id')
-        .add('requested_vfs')
-        .add('allocated_vfs')
-        .add('interconnect_uri')
-        .add('mac_type')
-        .add('wwpn_type')
-        .add('mac')
-        .add('wwnn')
-        .add('wwpn')
-        .add('requested_mbps')
-        .add('allocated_mbps')
-        .add('maximum_mbps')
+        .add(:id)
+        .add(:name)
+        .add(:function_type)
+        .add(:deployment_status)   
+        .add(:network_uri)
+        .add(:port_id)
+        .add(:requested_vfs)
+        .add(:allocated_vfs)
+        .add(:interconnect_uri)
+        .add(:mac_type)
+        .add(:wwpn_type)
+        .add(:mac)
+        .add(:wwnn)
+        .add(:wwpn)
+        .add(:requested_mbps)
+        .add(:allocated_mbps)
+        .add(:maximum_mbps)
+        .add(:boot)    
 
   filter.connect(self, :connection_details) 
   
@@ -66,11 +67,33 @@ class OneviewServerProfileConnections < OneviewResourceBase
     # iterate around the keys and values of the resource to build up the 
     # parsed data
     resource.item.each do |key, value|
-      parsed[snake_case(key)] = value
+      # check the key to ensure that it has the correct format to read
+      # from oneview
+      # Most of the attributes can be converted from snake_case to snakeCase, but some of them do not follow
+      # relevant conventions
+      # For example converting `requestedVFs` to snake case would result in `requested_v_fs` which is incorrect
+      # So this has to be caught and corrected
+      if key == 'requestedVFs'
+        api_name = 'requested_vfs'
+      elsif key == 'allocatedVFs'
+        api_name = 'allocated_vfs'
+      else
+        api_name = snake_case(key)
+      end
+
+      # determine the type of the value
+      case value.class.to_s
+      when 'Hash'
+        parsed[api_name.to_sym] = OneviewResourceProbe.new(value)
+      else
+        parsed[api_name.to_sym] = value
+      end
     end
 
     # return the pased hash to the calling function
     parsed
   end
   
+
+
 end

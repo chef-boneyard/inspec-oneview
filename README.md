@@ -88,6 +88,11 @@ The following resources are available in the InSpec Oneview Profile
 
  - [Oneview Generic Resource](docs/resources/oneview_generic_resource.md)
  - [Oneview Ethernet Network](docs/resources/oneview_ethernet_network.md)
+ - [Oneview Servers](docs/resources/oneview_servers.md)
+ - [Oneview Server Profiles](docs/resources/oneview_server_profiles.md)
+ - [Oneview Server Profile Connections](docs/resources/oneview_server_profile_connections.md)
+
+ All of the documention is based on version `300` of the OneView API.
 
 # Integration Testing
 

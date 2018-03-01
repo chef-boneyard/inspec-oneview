@@ -9,7 +9,7 @@ Use the `oneview_servers` InSpec audit resource to test the servers tha are conf
 ## References
 
  - [Ruby SDK to Interact with HPE OneView](https://github.com/HewlettPackard/oneview-sdk-ruby)
- - [HP OneView API Reference 101 - Server Hardware](http://h17007.www1.hpe.com/docs/enterprise/servers/oneviewhelp/oneviewRESTAPI/content/images/api/index.html#rest/server-hardware)
+ - [HP OneView API Reference 300 - Server Hardware](http://h17007.www1.hpe.com/docs/enterprise/servers/oneview3.0/cic-api/en/api-docs/current/index.html#rest/server-hardware)
 
 ## Syntax
 

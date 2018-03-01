@@ -30,7 +30,19 @@ class OneviewServerProfileConnections < OneviewResourceBase
         .add(:requested_mbps)
         .add(:allocated_mbps)
         .add(:maximum_mbps)
-        .add(:boot)    
+        .add(:boot_priority)    
+        .add(:boot_initiator_name_source)
+        .add(:boot_initiator_name)
+        .add(:boot_initiator_ip)
+        .add(:boot_initiator_subnet_mask)
+        .add(:boot_target_name)
+        .add(:boot_target_lun)
+        .add(:boot_first_target_boot_ip)
+        .add(:boot_first_boot_target_port)
+        .add(:boot_second_boot_target_ip)
+        .add(:boot_volume_source)
+        .add(:boot_chap_level)
+
 
   filter.connect(self, :connection_details) 
   
@@ -81,10 +93,14 @@ class OneviewServerProfileConnections < OneviewResourceBase
         api_name = snake_case(key)
       end
 
-      # determine the type of the value
-      case value.class.to_s
-      when 'Hash'
-        parsed[api_name.to_sym] = OneviewResourceProbe.new(value)
+      # check the key and if it is 'boot' iterate around the hash table creating
+      # the necessary boot attributes
+      if key == 'boot'
+        value.each do |k, v|
+          boot_attr_name = snake_case(k)
+          boot_attr_name.start_with?('boot') ? api_name = boot_attr_name : api_name = format('boot_%s', boot_attr_name)
+          parsed[api_name.to_sym] = v
+        end
       else
         parsed[api_name.to_sym] = value
       end

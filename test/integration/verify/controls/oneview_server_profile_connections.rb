@@ -1,5 +1,6 @@
 # define attributes for the control
 server_profile_name = attribute('server_profile_name', default: 'chef-esxi1')
+connection_name = attribute('connection_name', default: 'Deployment Network A')
 
 title 'OneView Server Profile Connections'
 
@@ -7,7 +8,8 @@ control 'oneview-server-profile-connections-1.0' do
   impact 1.0
   title 'Ensure that the specified profile has the correct connections'
 
-  describe oneview_server_profile_connections(name: server_profile_name).where(id: 1) do
+  describe oneview_server_profile_connections(name: server_profile_name).where(name: connection_name) do
+    its('id') { should cmp 1 }
     its('function_type') { should cmp 'Ethernet' }
     its('deployment_status') { should cmp 'Deployed' }
     its('requested_vfs') { should cmp 'Auto' }
@@ -15,6 +17,7 @@ control 'oneview-server-profile-connections-1.0' do
     its('wwpn_type') { should cmp 'Virtual' }
     its('wwnn') { should cmp nil }
 
-    its('boot.priority') { should cmp 'Primary' }
+    its('boot_priority') { should cmp 'Primary' }
+    its('boot_target_lun') { should cmp 0 }
   end
 end

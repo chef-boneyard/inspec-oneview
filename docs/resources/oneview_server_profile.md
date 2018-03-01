@@ -9,7 +9,7 @@ Use the `oneview_server_profile` InSpec audit resource to test a specific server
 ## References
 
  - [Ruby SDK to Interact with HPE OneView](https://github.com/HewlettPackard/oneview-sdk-ruby)
- - [HP OneView API Reference 101 - Server Profiles](http://h17007.www1.hpe.com/docs/enterprise/servers/oneviewhelp/oneviewRESTAPI/content/images/api/index.html#rest/server-profiles)
+ - [HP OneView API Reference 300 - Server Profiles](http://h17007.www1.hpe.com/docs/enterprise/servers/oneview3.0/cic-api/en/api-docs/current/index.html#rest/server-profiles)
 
 ## Syntax
 
@@ -95,17 +95,23 @@ its ('order') { should eq ['PXE', 'HardDisk'] }
 
 ### have_managed_boot_mode
 
-States if the boot mode is managed or not.
-
-**NOTE: This is not documented on the HPE API website, its existence was found during development of this profile**
+Indicates whether the boot mode is configured using the server profile. Value can be 'true' or 'false'. The value defaults to 'false' when unspecified. 
 
 ### pxe_boot_policy
 
-**NOTE: This is not documented on the HPE API website, its existence was found during development of this profile**
+Defines the filtering or priority of the PXE boot options for each enabled NIC port. This field is required only when the "mode" is set to "UEFI" or "UEFIOptimized". Possible values are:
+
+| Value | Description |
+|---|---|
+| Auto | No change from current server setting |
+| IPv4 | Only IPv4 entries will be allowed in the boot order |
+| IPv6 | Only IPv6 entries will be allowed in the boot order |
+| IPv4ThenIPv6 | both IPv4 and IPv6 entries will be present in the boot order with IPV4 entries coming first |
+| IPv6ThenIPv4 | both IPv4 and IPv6 entries will be present in the boot order with IPv6 entries coming first |
 
 ### mode
 
-**NOTE: This is not documented on the HPE API website, its existence was found during development of this profile**
+The environment used for server boot operation. Possible values are "UEFI","UEFIOptimized" or "BIOS". This field is required only when "have_managed_boot_mode" is set to 'true'. 
 
 ### category
 

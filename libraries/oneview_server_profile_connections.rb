@@ -16,7 +16,7 @@ class OneviewServerProfileConnections < OneviewResourceBase
         .add(:id)
         .add(:name)
         .add(:function_type)
-        .add(:deployment_status)   
+        .add(:deployment_status)
         .add(:network_uri)
         .add(:port_id)
         .add(:requested_vfs)
@@ -30,11 +30,13 @@ class OneviewServerProfileConnections < OneviewResourceBase
         .add(:requested_mbps)
         .add(:allocated_mbps)
         .add(:maximum_mbps)
-        .add(:boot_priority)    
+        .add(:boot_priority)
         .add(:boot_initiator_name_source)
         .add(:boot_initiator_name)
         .add(:boot_initiator_ip)
         .add(:boot_initiator_subnet_mask)
+        .add(:boot_initiator_gateway)
+        .add(:boot_initiator_vlan_id)
         .add(:boot_target_name)
         .add(:boot_target_lun)
         .add(:boot_first_target_boot_ip)
@@ -42,10 +44,13 @@ class OneviewServerProfileConnections < OneviewResourceBase
         .add(:boot_second_boot_target_ip)
         .add(:boot_volume_source)
         .add(:boot_chap_level)
+        .add(:boot_chap_name)
+        .add(:boot_chap_secret)
+        .add(:boot_mutual_chap_name)
+        .add(:boot_mutual_chap_secret)
 
+  filter.connect(self, :connection_details)
 
-  filter.connect(self, :connection_details) 
-  
   # Constructor for the resource. This calls the parent constructor
   # to get the generic resource for the all the servers in OneView.
   #
@@ -73,7 +78,7 @@ class OneviewServerProfileConnections < OneviewResourceBase
   def parse_connection(resource, index)
     # Create a hash to hold the parsed data
     parsed = {
-      number: index + 1 
+      number: index + 1,
     }
 
     # iterate around the keys and values of the resource to build up the 
@@ -109,7 +114,4 @@ class OneviewServerProfileConnections < OneviewResourceBase
     # return the pased hash to the calling function
     parsed
   end
-  
-
-
 end

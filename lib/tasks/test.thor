@@ -1,52 +1,62 @@
-require_relative '../../libraries/oneview_backend'
-
 class Test < Thor
-  attr_reader :integration_tests_dir, :working_dir
+  attr_reader :integration_tests_dir, :vendor_dir, :infrastructure_cookbook_dir
 
   def initialize(*args)
     super
     # Set the necessary directories
     @integration_tests_dir = File.join(File.dirname(__FILE__), '..', '..', 'test', 'integration')
-    @working_dir = File.join(integration_tests_dir, 'build')
+    @infrastructure_cookbook_dir = File.join(integration_tests_dir, 'build', 'cookbooks', 'infrastructure')
+    @vendor_dir = File.join(integration_tests_dir, 'build', 'vendor')
 
-    # Ensure that the terraform binary is available
-    cmd_available = which('terraform')
-    abort 'Terraform not found in the PATH. Please ensure it is installed and in the PATH' if cmd_available.nil?
+    # Ensure that the necessary binaries are available
+    berks = which('berks')
+    chef_client = which('chef-client')
+    if berks.nil? || chef_client.nil?
+      message = 'Please ensure that the following binaries are in your PATH.'
+      message += "\n  berks" if berks.nil?
+      message += "\n  chef-client" if chef_client.nil?
+      message += "\nYou may need to install ChefDK"
+      abort message
+    end
   end
 
   desc 'integration', 'Perform integration tests'
   def integration
-    init_workspace
+    vendor_cookbooks
     setup_integration
     execute
     cleanup
   end
 
-  desc 'init_workspace', 'Initialize the Terraform workspace'
-  def init_workspace
-    say '----> Initialising', :green
-    cmd = format('cd %s && terraform init', working_dir)
-    result = `#{cmd}`
-    say result
+  desc 'vendor_cookbooks', 'Get necessary cookbooks to build infrastructure'
+  def vendor_cookbooks
+    say '----> Vendoring Cookbooks', :green
+    Dir.chdir(infrastructure_cookbook_dir) do
+      vendor_path = File.join('..', '..', 'vendor', 'cookbooks')
+      cmd = format('berks vendor %s', vendor_path)
+      result = `#{cmd}`
+      say result
+    end
   end
 
   desc 'setup_integration', 'Setup the infrastructure for the Integration tests'
+  method_option :attributes, type: :string, default: nil
   def setup_integration
-    # get the connection information for the Oneview instance
-    oneview_backend = OneviewConnection.new
-    config = oneview_backend.config
+    # Abort if the path to the attribnutes file has not been set
+    abort 'Please set the path to the attributes file using the --attributes option' if options[:attributes].nil?
+
+    # Abort if the attributes file cannot be located
+    abort 'Unable to find specified attributes file' if !File.exist?(options[:attributes])
+
+    # get the absolute path to the attributes file
+    attributes_file = File.expand_path(options[:attributes])
 
     say '----> Setting up Infrastructure', :green
 
     # CHange the correct directory to perform the terraform commands
-    Dir.chdir(working_dir) do
+    Dir.chdir(vendor_dir) do
       # Create the plan to be applied to OneView
-      cmd = format('terraform plan -var "oneview_username=%s" -var "oneview_password=%s" -var "oneview_endpoint=%s" -out inspec-oneview.plan', config['user'], config['password'], config['url'])
-      result = `#{cmd}`
-      say result
-
-      # apply the plan
-      cmd = 'terraform apply inspec-oneview.plan'
+      cmd = format('chef-client -z -j %s -o recipe[infrastructure]', attributes_file)
       result = `#{cmd}`
       say result
     end
@@ -61,15 +71,21 @@ class Test < Thor
   end
 
   desc 'cleanup', 'Remove infrastructure created for integration tests'
+  method_option :attributes, type: :string, default: nil
   def cleanup
-    # get the connection information for the Oneview instance
-    oneview_backend = OneviewConnection.new
-    config = oneview_backend.config
+    # Abort if the path to the attribnutes file has not been set
+    abort 'Please set the path to the attributes file using the --attributes option' if options[:attributes].nil?
+
+    # Abort if the attributes file cannot be located
+    abort 'Unable to find specified attributes file' if !File.exist?(options[:attributes])
+
+    # get the absolute path to the attributes file
+    attributes_file = File.expand_path(options[:attributes])
 
     say '----> Cleanup', :green
 
-    Dir.chdir(working_dir) do
-      cmd = format('terraform destroy -force -var "oneview_username=%s" -var "oneview_password=%s" -var "oneview_endpoint=%s"', config['user'], config['password'], config['url'])
+    Dir.chdir(vendor_dir) do
+      cmd =  format('chef-client -z -j %s -o recipe[infrastructure::destroy]', attributes_file)
       result = `#{cmd}`
       say result
     end

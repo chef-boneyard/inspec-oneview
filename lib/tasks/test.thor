@@ -21,11 +21,12 @@ class Test < Thor
   end
 
   desc 'integration', 'Perform integration tests'
+  method_option :attributes, type: :string, default: nil
   def integration
     vendor_cookbooks
-    setup_integration
+    setup options[:attributes]
     execute
-    cleanup
+    destroy options[:attributes]
   end
 
   desc 'vendor_cookbooks', 'Get necessary cookbooks to build infrastructure'
@@ -42,24 +43,7 @@ class Test < Thor
   desc 'setup_integration', 'Setup the infrastructure for the Integration tests'
   method_option :attributes, type: :string, default: nil
   def setup_integration
-    # Abort if the path to the attribnutes file has not been set
-    abort 'Please set the path to the attributes file using the --attributes option' if options[:attributes].nil?
-
-    # Abort if the attributes file cannot be located
-    abort 'Unable to find specified attributes file' if !File.exist?(options[:attributes])
-
-    # get the absolute path to the attributes file
-    attributes_file = File.expand_path(options[:attributes])
-
-    say '----> Setting up Infrastructure', :green
-
-    # CHange the correct directory to perform the terraform commands
-    Dir.chdir(vendor_dir) do
-      # Create the plan to be applied to OneView
-      cmd = format('chef-client -z -j %s -o recipe[infrastructure]', attributes_file)
-      result = `#{cmd}`
-      say result
-    end
+    setup options[:attributes]
   end
 
   desc 'execute', 'Run the integration tests'
@@ -73,22 +57,7 @@ class Test < Thor
   desc 'cleanup', 'Remove infrastructure created for integration tests'
   method_option :attributes, type: :string, default: nil
   def cleanup
-    # Abort if the path to the attribnutes file has not been set
-    abort 'Please set the path to the attributes file using the --attributes option' if options[:attributes].nil?
-
-    # Abort if the attributes file cannot be located
-    abort 'Unable to find specified attributes file' if !File.exist?(options[:attributes])
-
-    # get the absolute path to the attributes file
-    attributes_file = File.expand_path(options[:attributes])
-
-    say '----> Cleanup', :green
-
-    Dir.chdir(vendor_dir) do
-      cmd =  format('chef-client -z -j %s -o recipe[infrastructure::destroy]', attributes_file)
-      result = `#{cmd}`
-      say result
-    end
+    destroy options[:attributes]
   end
 
   private
@@ -104,5 +73,44 @@ class Test < Thor
       }
     end
     nil
+  end
+
+  def setup(attributes)
+    attributes_file = resolve_file(attributes)
+
+    say '----> Setting up Infrastructure', :green
+
+    # CHange the correct directory to perform the terraform commands
+    Dir.chdir(vendor_dir) do
+      # Create the plan to be applied to OneView
+      cmd = format('chef-client -z -j %s -o recipe[infrastructure]', attributes_file)
+      result = `#{cmd}`
+      say result
+    end
+  end
+
+  def destroy(attributes)
+    attributes_file = resolve_file(attributes)
+
+    say '----> Cleanup', :green
+
+    Dir.chdir(vendor_dir) do
+      cmd =  format('chef-client -z -j %s -o recipe[infrastructure::destroy]', attributes_file)
+      result = `#{cmd}`
+      say result
+    end
+  end
+
+  def resolve_file(attributes)
+    # Abort if the path to the attribnutes file has not been set
+    abort 'Please set the path to the attributes file using the --attributes option' if attributes.nil?
+
+    # get the absolute path to the attributes file
+    attributes_file = File.expand_path(attributes)
+
+    # Abort if the attributes file cannot be located
+    abort 'Unable to find specified attributes file' if !File.exist?(attributes_file)
+
+    attributes_file
   end
 end

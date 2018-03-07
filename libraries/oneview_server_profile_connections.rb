@@ -72,7 +72,7 @@ class OneviewServerProfileConnections < OneviewResourceBase
     # Iterate around the connections of the profiler
     connections.each_with_index.map do |connection, index|
       parse_connection(connection, index)
-    end
+    end if methods.include?('connections')
   end
 
   def parse_connection(resource, index)

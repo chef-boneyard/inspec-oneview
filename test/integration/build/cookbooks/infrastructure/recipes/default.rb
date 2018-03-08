@@ -20,7 +20,7 @@ network = node['infrastructure']['network']
 oneview_ethernet_network network['name'] do
   client my_client
   data(
-    vlanId:  "#{network['vlanId']}",
+    vlanId:  1,
     purpose: 'General',
     smartLink: false,
     privateNetwork: false,
@@ -36,8 +36,8 @@ lig_uplink_data = {
   ethernetNetworkType: 'Tagged'
 }
 connections = [
-  { bay: "#{lig['side_a_bay']}", port: "#{lig['port']}", type: "#{lig['type']}", enclosure_index: "#{lig['enclosure_index']}" },
-  { bay: "#{lig['side_b_bay']}", port: "#{lig['port']}", type: "#{lig['type']}", enclosure_index: "#{lig['enclosure_index']}" }
+  { bay: lig['side_a_bay'], port: "#{lig['port']}", type: "#{lig['type']}", enclosure_index: lig['enclosure_index'] },
+  { bay: lig['side_b_bay'], port: "#{lig['port']}", type: "#{lig['type']}", enclosure_index: lig['enclosure_index'] }
 ]
 oneview_logical_interconnect_group lig['name'] do
   client my_client
@@ -49,8 +49,8 @@ oneview_logical_interconnect_group lig['name'] do
     enclosureType: 'SY12000'
   )
   interconnects [
-    { bay: "#{lig['side_a_bay']}", type: "#{lig['type']}", enclosure_index: "#{lig['enclosure_index']}" },
-    { bay: "#{lig['side_b_bay']}", type: "#{lig['type']}", enclosure_index: "#{lig['enclosure_index']}" }
+    { bay: lig['side_a_bay'], type: "#{lig['type']}", enclosure_index: lig['enclosure_index'] },
+    { bay: lig['side_b_bay'], type: "#{lig['type']}", enclosure_index: lig['enclosure_index'] }
   ]
   uplink_sets [
     { data: lig_uplink_data, connections: connections, networks: ["#{network['name']}"] }

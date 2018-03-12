@@ -36,7 +36,7 @@ oneview_fc_network fc_network['name'] do
     autoLoginRedistribution: true,
     fabricType: 'FabricAttach'
   )
-  associated_san "#{fc_network['associated_san']}"
+  associated_san "#{fc_network['associated_san']}" unless fc_network['associated_san'].nil?
   only_if { fc_network['create'] }
 end
 
@@ -104,6 +104,7 @@ oneview_logical_interconnect_group lig_fc['name'] do
       ]
     }
   ]
+  only_if { lig_fc['create'] }
 end
 
 oneview_logical_interconnect_group 'InSpec-SAS-LIG' do

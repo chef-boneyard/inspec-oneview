@@ -74,7 +74,8 @@ class OneviewServers < OneviewResourceBase
 
     # Set the rom version regular expression to extract out the item
     # @rom_version_regex = '^([^\s]+)\s([^\s]+)?\s?\(?(.*?)\)?$'
-    @rom_version_regex = '^(?<type>\S+)\s+(?:(?<version>\S+)\s+\((?<date>\S+)\)|(?<date>\S+))$'
+    # @rom_version_regex = '^(?<type>\S+)\s+(?:(?<version>\S+)\s+\((?<date>\S+)\)|(?<date>\S+))$'
+    @rom_version_regex = '^(?<type>\S+)\s+(?:(?<version>\S+)\s+\(?(?<date>\S+)\)?|(?<date>\S+))$'
 
     # find the servers
     resources

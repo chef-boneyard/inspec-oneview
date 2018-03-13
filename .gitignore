@@ -15,3 +15,5 @@ local
 .terraform
 
 conf
+
+test/integration/build/vendor

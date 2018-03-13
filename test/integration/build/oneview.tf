@@ -10,7 +10,7 @@ variable "oneview_server_hardware_type" {
 # Although the provider is meant to support this, it does not work.
 # This has been logged under issue https://github.com/HewlettPackard/terraform-provider-oneview/issues/46
 variable "oneview_enclosure_group" {
-  default = "TME_Synergy_R1"
+  default = "InSpec-Enclosure-Group"
 }
 
 # Configure the Oneview provider
@@ -30,6 +30,32 @@ resource "oneview_ethernet_network" "network_1" {
   ethernet_network_type = "Tagged"
 }
 
+# Create a logical interconnect group
+resource "oneview_logical_interconnect_group" "lig_1" {
+  name = "InSpec-Logical-Interconnect-Group"
+
+  internal_network_uris = [
+    "${oneview_ethernet_network.network_1.0.uri}"
+  ]
+
+  interconnect_map_entry_template {
+    interconnect_type_name = "Virtual Connect SE 40Gb F8 Module for Synergy"
+    bay_number = 3
+  }
+
+  uplink_set {
+    name = "InSpec-Uplink-Default"
+    network_uris = [
+      "${oneview_ethernet_network.network_1.0.uri}"
+    ]
+    logical_port_config {
+      bay_num = 4
+      port_num = [22]
+    }
+  }
+}
+
+/*
 # Create an Enclosure Group for the TerraForm infrastructure
 # resource "oneview_enclosure_group" "enclosure_group_1" {
 #  name = "InSpec-Enclosure-Group"
@@ -43,8 +69,9 @@ resource "oneview_server_profile_template" "template_1" {
   server_hardware_type = "${var.oneview_server_hardware_type}"
 
   network {
-    name = "InSPec-Ethernet-Network-Connection"
+    name = "InSpec-Ethernet-Network-Connection"
     function_type = "Ethernet"
     network_uri = "${oneview_ethernet_network.network_1.uri}"
   }
 }
+*/

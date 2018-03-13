@@ -56,7 +56,7 @@ class OneviewServerProfile < OneviewResourceBase
       local_storage.send(method_name)
     elsif san_storage_attrs.include?(method_id.to_s)
       san_storage_atrrs.send(method_name)
-    else
+    elsif methods.include?(method_name)
       send(method_name)
     end
   end
@@ -138,6 +138,6 @@ class OneviewServerProfile < OneviewResourceBase
       define_singleton_method method_name do
         value
       end
-    end
+    end unless bios.nil?
   end
 end

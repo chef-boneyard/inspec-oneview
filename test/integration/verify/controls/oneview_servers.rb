@@ -1,8 +1,8 @@
 # Define attributes for the control
 # An example attribute file can be found in the attributes folder within integration.
 # Please create a new one relevant to the infrastructure being tested
-rom_version_attr = attribute('rom_version', default: 'I37 v2.52 (10/25/2017)', description: 'Version of the server hardware firmware to test for')
-mp_firmware_version_attr = attribute('mp_firwmare_version', default: '2.55 Aug 16 2017', description: 'Version of the firmware installed on the iLO')
+rom_version_attr = attribute('rom_version', default: 'I39 v1.30 08/26/2014', description: 'Version of the server hardware firmware to test for')
+mp_firmware_version_attr = attribute('mp_firwmare_version', default: '2.30 Jul 23 2015', description: 'Version of the firmware installed on the iLO')
 power_state_attr = attribute('power_state', default: 'On', description: 'Power state of the machines to look for')
 server_count = attribute('server_count', default: 14, description: 'Number of servers to check against')
 
@@ -26,7 +26,7 @@ control 'oneview-servers-1.0' do
   describe oneview_servers.where { rom_version != rom_version_attr } do
     its('entries.length') { should cmp 0 }
     its('rom_version') { should eq [] }
-    its('rom_version_type') { should cmp 'I38' }
+    its('rom_version_type') { should cmp 'I39' }
     its('name') { should eq [] }
   end
 

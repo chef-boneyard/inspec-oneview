@@ -88,6 +88,7 @@ The following resources are available in the InSpec Oneview Profile
 
  - [Oneview Generic Resource](docs/resources/oneview_generic_resource.md)
  - [Oneview Ethernet Network](docs/resources/oneview_ethernet_network.md)
+ - [Oneview FC Network](docs/resources/ineview_fc_network.md)
  - [Oneview Servers](docs/resources/oneview_servers.md)
  - [Oneview Server Profiles](docs/resources/oneview_server_profiles.md)
  - [Oneview Server Profile Connections](docs/resources/oneview_server_profile_connections.md)
@@ -96,26 +97,47 @@ The following resources are available in the InSpec Oneview Profile
 
 # Integration Testing
 
-Our integration tests spin up resources in Oneview using Terraform and the results are verified by InSpec. The `test/integration/verify/controls` directory contains all of the tests that are run during the integration tests. These can be used as examples of how to use this resource pack.
+Our integration tests spin up resources in Oneview using a cookbook in local mode and the results are verified by InSpec. The `test/integration/verify/controls` directory contains all of the tests that are run during the integration tests. These can be used as examples of how to use this resource pack.
 
-In order to run the integration tests the HPE OneView Terraform provider needs to be installed. However this is not as simple as downloading it as it needs to be compiled using Go. Please review the [README](https://github.com/HewlettPackard/terraform-provider-oneview) for the HPE OneView Terraform Provider to see how this is accomplished.
+In oder to run the inetgration tests both Berkshelf and chef-client are required. These will both be installed if you have ChefDK installed.
+The cookbooks runs locally on your machine and remotes into the specified OneView environment using connection settings that are passed in as attributes.
+
+As a minimum the attributes file that is passed to the test must have the following
+
+```json
+{
+  "infrastructure": {
+    "connection": {
+      "url": "https://192.168.1.1",
+      "user": "my_user",
+      "password": "my_password",
+      "api_version": 300,
+      "ssl_enabled": false
+    }
+  }
+}
+```
 
 Thor tasks have been configured to allow the easy execution of the integration tests:
 
 ```bash
-thor lint:rubocop               # Run the robocop linter
-thor test:integration           # Run Rubocop lint checks
+thor lint:rubocop                                                     # Run the robocop linter
+thor test:integration --attributes local\infrastructure.json          # Run Rubocop lint checks
 ```
 
 The `test:integration` task will run all of the following in order, however these can be called manually in order if required.
 
 ```bash
-thor test:init_workspace
+thor test:vendor_cookbooks
 thor test:cleanup
-thor test:setup_integration
+thor test:setup_integration --attributes local\infrastructure.json
 thor test:execute
-thor test:cleanup
+thor test:cleanup --attributes local\infrastructure.json
 ```
+
+When Berkshelf is used ot vendor the cookbooks they are placed into the `test/integration/build/vendor/cookbooks` directory.
+
+NOTE: `chef-client` expects to be run with admin privileges. So if running on MacOS or Linux please use `sudo` or if on Windows ensure the process is being run in an elevated PowerShell or Command Prompt. No changes will be made to your local system.
 
 # Profile Class Documentation
 

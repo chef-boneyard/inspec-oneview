@@ -19,7 +19,7 @@ default['infrastructure']['lig']['ethernet']['port'] = 'Q1'
 default['infrastructure']['lig']['ethernet']['icm_type'] = 'Virtual Connect SE 40Gb F8 Module for Synergy'
 default['infrastructure']['lig']['ethernet']['enclosure_index'] = 1
 
-default['infrastructure']['lig']['fc']['create'] = true
+default['infrastructure']['lig']['fc']['create'] = false
 default['infrastructure']['lig']['fc']['name'] = 'InSpec-LIG-FC'
 default['infrastructure']['lig']['fc']['uplink_name'] = 'InSpec-LIG - FC - Uplink Set'
 default['infrastructure']['lig']['fc']['side_a_bay'] = 1
@@ -29,11 +29,11 @@ default['infrastructure']['lig']['fc']['icm_type'] = 'Virtual Connect SE 16Gb FC
 default['infrastructure']['lig']['fc']['enclosure_index'] = 1
 
 # Enclosure Group Attributes
-default['infrastructure']['enclosure_group']['create'] = true
+default['infrastructure']['enclosure_group']['create'] = false
 default['infrastructure']['enclosure_group']['name'] = 'InSpec-Enclosure-Group'
 
 # Server Profile Template Attributes
-default['infrastructure']['server_profile_template']['create'] = true
+default['infrastructure']['server_profile_template']['create'] = false
 default['infrastructure']['server_profile_template']['name'] = 'InSpec-Server-Profile-Template'
 default['infrastructure']['server_profile_template']['server_hardware_type'] = 'SY 480 Gen9 1'
 default['infrastructure']['server_profile_template']['volumes'] = [
@@ -64,6 +64,6 @@ default['infrastructure']['server_profile_template']['volumes'] = [
 ]
 
 # Server profile attributes
-default['infrastructure']['server_profile']['create'] = true
+default['infrastructure']['server_profile']['create'] = false
 default['infrastructure']['server_profile']['name'] = 'InSpec-Server-Profile'
 default['infrastructure']['server_profile']['server_hardware'] = nil

@@ -67,7 +67,7 @@ class Test < Thor
   def which(cmd)
     exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
     ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
-      exts.each { |ext| 
+      exts.each { |ext|
         binary = File.join(path, format('%s%s', cmd, ext))
         return binary if File.executable?(binary) && !File.directory?(binary)
       }

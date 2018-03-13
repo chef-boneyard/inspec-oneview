@@ -27,8 +27,14 @@ oneview_enclosure_group eg['name'] do
   action :delete
 end
 
-lig = node['infrastructure']['lig']
+lig = node['infrastructure']['lig']['ethernet']
 oneview_logical_interconnect_group lig['name'] do
+  client my_client
+  action :delete
+end
+
+network = node['infrastructure']['network']['fc']
+oneview_fc_network network['name'] do
   client my_client
   action :delete
 end

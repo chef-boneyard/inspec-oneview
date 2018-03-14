@@ -12,6 +12,7 @@ my_client = {
   user: connection['username'],
   password: connection['password'],
   api_version: connection['api_version'],
+  api_variant: connection['api_variant'],
   ssl_enabled: connection['ssl_enabled']
 }
 
@@ -44,7 +45,6 @@ end
 lig_ethernet = node['infrastructure']['lig']['ethernet']
 oneview_logical_interconnect_group lig_ethernet['name'] do
   client my_client
-  api_variant 'Synergy'
   data(
     redundancyType: 'Redundant',
     interconnectBaySet: 3,
@@ -126,7 +126,7 @@ oneview_enclosure_group eg['name'] do
   client my_client
   data(
     stackingMode: 'Enclosure',
-    interconnectBayMappingCount: 3,
+    interconnectBayMappingCount: 6,
     ipAddressingMode: 'DHCP'
   )
   logical_interconnect_groups [

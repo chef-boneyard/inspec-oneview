@@ -110,6 +110,19 @@ class OneviewResourceBase < Inspec.resource(1)
     end
   end
 
+  # Get the resource as referenced by the supplied uri
+  #
+  # @param string uri The uri to the resource
+  # @param array filter Array of values that should be returned instead of the whole thing
+  #
+  # @return hash Hash of information about the target resource
+  def resource(uri, filter = [])
+    response = client.rest_get(uri)
+    resource = client.response_handler(response)
+
+    resource
+  end
+
   # Given a string like `computer_name` return the camel case version, e.g. computerName
   #
   # @param string Data Data that needs to be converted from snake_case to camelCase

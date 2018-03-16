@@ -32,7 +32,7 @@ All attributes are references using snake_case, whereas the API will return came
 
 ## Testers
 
-There are a number of built in comparison operrtors that are available to test the result with an expected value.
+There are a number of built in comparison operators that are available to test the result with an expected value.
 
 For information on all that are available please refer to the [Inspec Matchers Reference](https://www.inspec.io/docs/reference/matchers/) page.
 

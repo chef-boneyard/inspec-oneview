@@ -126,7 +126,7 @@ oneview_enclosure_group eg['name'] do
   client my_client
   data(
     stackingMode: 'Enclosure',
-    interconnectBayMappingCount: 3,
+    interconnectBayMappingCount: 6,
     ipAddressingMode: 'DHCP'
   )
   logical_interconnect_groups [

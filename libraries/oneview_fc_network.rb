@@ -41,7 +41,7 @@ class OneviewFcNetwork < OneviewResourceBase
   def respond_to_missing?(*)
     true
   end
-  
+
   def has_auto_login_redistribution?
     autoLoginRedistribution
   end

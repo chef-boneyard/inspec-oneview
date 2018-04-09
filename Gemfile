@@ -7,6 +7,6 @@ group :development do
   gem 'thor'
 end
 
-gem :debug do
+group :debug do
   gem 'byebug'
 end

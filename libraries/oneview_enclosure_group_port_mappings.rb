@@ -41,7 +41,7 @@ class OneviewEnclosureGroupPortMappings < OneviewResourceBase
     # Iterate around the port_mappings of the enclosure_group
     portMappings.each_with_index.map do |port_mapping, index|
       parse_port_mapping(port_mapping, index)
-    end if method('portMappings')
+    end if methods.include?('portMappings')
   end
 
   def parse_port_mapping(resource, index)

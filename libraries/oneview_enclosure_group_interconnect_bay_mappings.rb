@@ -38,7 +38,7 @@ class OneviewEnclosureGroupInterconnectBayMappings < OneviewResourceBase
   def bay_mapping_details
     interconnectBayMappings.each.map do |bay_mapping|
       parse_bay_mapping(bay_mapping)
-    end if method('interconnectBayMappings')
+    end if methods.include?('interconnectBayMappings')
   end
 
   def parse_bay_mapping(oneview_resource)

@@ -49,7 +49,8 @@ class Test < Thor
   desc 'execute', 'Run the integration tests'
   def execute
     say '----> Executing Tests', :green
-    cmd = format('chef exec inspec exec %s/verify', integration_tests_dir)
+    # now relies on bundle installed inspec
+    cmd = format('bundle exec inspec exec %s/verify', integration_tests_dir)
     result = `#{cmd}`
     say result
   end

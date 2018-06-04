@@ -138,7 +138,7 @@ thor test:execute
 thor test:cleanup --attributes local\infrastructure.json
 ```
 
-When Berkshelf is used ot vendor the cookbooks they are placed into the `test/integration/build/vendor/cookbooks` directory.
+When Berkshelf is used to vendor the cookbooks they are placed into the `test/integration/build/vendor/cookbooks` directory.
 
 NOTE: `chef-client` expects to be run with admin privileges. So if running on MacOS or Linux please use `sudo` or if on Windows ensure the process is being run in an elevated PowerShell or Command Prompt. No changes will be made to your local system.
 
@@ -156,6 +156,25 @@ thor docs:create
 ```
 
 Once the documentation has been generated view it by going to [file://docs/profile/index.html](file://docs/profile/index.html).
+
+# FAQ
+
+## Error calling OneView API `ERROR -- : SSL verification failed for request`
+
+As suggested by the resulting output, run the following to import the certificates locally:
+```
+$ bundle exec oneview-sdk-ruby cert import https://192.168.1.1
+Importing certificate for 'https://10.0.0.123' into '/Users/spaterson/.oneview-sdk-ruby/trusted_certs.cer'...
+Cert added to '/Users/spaterson/.oneview-sdk-ruby/trusted_certs.cer'. Cert Info:
+OneView at https://192.168.1.1
+=============================
+-----BEGIN CERTIFICATE-----
+MIIEDjCCSDKLJSDafgICJiowDQYJKoZIhvcNAQELBQAwdzELMAkGA1UEBhMCVVMx
+EzARBgNVBAgMCkNhbGlmb3JuaWExEjasdfasdfafdVBhbG8gQWx0bzEjMCEGA1UE
+...
+-----END CERTIFICATE-----
+```
+
 
 # Contributing
 

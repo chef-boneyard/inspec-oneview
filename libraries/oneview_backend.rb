@@ -3,43 +3,6 @@
 require 'oneview-sdk'
 require 'inspec'
 
-# Class to manage the connection to Oneview to retrieve information about the resources
-#
-# @author Russell Seymour
-class OneviewConnection
-  attr_reader :config
-
-  # Constructor that reads the configuration file
-  def initialize
-    # If the INSPEC_ONEVIEW_SETTINGS environment has been specifid set the
-    # settings file accordingly, otherwise set to the default
-    oneview_settings_file = ENV['INSPEC_ONEVIEW_SETTINGS']
-    if oneview_settings_file.nil?
-
-      # The environment var has not been set so set to the default location
-      oneview_settings_file = File.join(Dir.home, '.oneview', 'inspec')
-    end
-
-    # Ensure that the settings file exists
-    if File.file?(oneview_settings_file)
-      @config = OneviewSDK::Config.load(oneview_settings_file)
-    else
-      @config = nil
-      abort format('%s was not found or is not accessible', oneview_settings_file)
-    end
-  end
-
-  # Connect to OneView using the specified configuration file
-  #
-  # @author Russell Seymour
-  def client
-    return @client if defined?(@client)
-
-    # Create the client using the SDK
-    @client = OneviewSDK::Client.new(config)
-  end
-end
-
 # @!parse
 # Base class from which all Inspec resources are derived.
 # This inherits from the Inspec resource
@@ -70,44 +33,12 @@ class OneviewResourceBase < Inspec.resource(1)
       opts[option_name] = ENV[env_var_name] unless ENV[env_var_name].nil?
     end
 
-    # Create a connection to Onvewiew
-    oneview = OneviewConnection.new
-
-    # Create the client
-    @client = oneview.client
+    # Create the client using train Oneview transport
+    @client = inspec.backend
   end
 
   def resources
-    # Determine the endpoint that needs to be called
-    endpoint = format('/rest/%s', opts[:type])
-
-    # Find the resources
-    response = client.rest_get(endpoint)
-    resources = client.response_handler(response)
-
-    # Filter the resources by the name if it has been specified
-    unless opts[:name].nil?
-      resources = resources['members'].select { |r| r['name'] == opts[:name] }
-    end
-
-    # process the resource differently based on whether there is one type of several returned
-    if resources.count == 1
-      @total = 1
-
-      # Create the dynamic methods for each of the attributes that have been returned
-      dm = OneviewResourceDynamicMethods.new
-      dm.create_methods(self, resources.first)
-    elsif resources.count > 1
-
-      # create dynamic methods for each of the attributes that have been returned
-      dm = OneviewResourceDynamicMethods.new
-      dm.create_methods(self, resources)
-
-      # now process the members of that have been returned
-      @probes = resources['members'].map do |item|
-        parse_resource(item)
-      end.compact
-    end
+    client.resources
   end
 
   # Get the resource as referenced by the supplied uri
@@ -116,9 +47,9 @@ class OneviewResourceBase < Inspec.resource(1)
   # @param array filter Array of values that should be returned instead of the whole thing
   #
   # @return hash Hash of information about the target resource
-  def resource(uri, filter = [])
-    response = client.rest_get(uri)
-    resource = client.response_handler(response)
+  def resource(uri, _filter = [])
+    response = client.oneview_client.rest_get(uri)
+    resource = client.oneview_client.response_handler(response)
 
     resource
   end
@@ -189,7 +120,7 @@ class OneviewResourceDynamicMethods
         value
       end
     when 'Hash'
-      value.count == 0 ? return_value = value : return_value = OneviewResourceProbe.new(value)
+      value.count.zero? ? return_value = value : return_value = OneviewResourceProbe.new(value)
       object.define_singleton_method name do
         return_value
       end

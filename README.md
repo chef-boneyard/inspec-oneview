@@ -88,12 +88,12 @@ The following resources are available in the InSpec Oneview Profile
 
  - [Oneview Ethernet Network](docs/resources/oneview_ethernet_network.md)
  - [Oneview Enclosure Group](docs/resources/oneview_enclosure_group.md)
- - [Oneview Enclosure Group Bay Mappings](docs/resources/oneview_enclosure_group_bay_mappings.md)
+ - [Oneview Enclosure Group Bay Mappings](docs/resources/oneview_enclosure_group_interconnect_bay_mappings.md)
  - [Oneview Enclosure Group Port Mappings](docs/resources/oneview_enclosure_group_port_mappings.md)
- - [Oneview FC Network](docs/resources/ineview_fc_network.md)
+ - [Oneview FC Network](docs/resources/oneview_fc_network.md)
  - [Oneview Generic Resource](docs/resources/oneview_generic_resource.md) 
  - [Oneview Servers](docs/resources/oneview_servers.md)
- - [Oneview Server Profiles](docs/resources/oneview_server_profiles.md)
+ - [Oneview Server Profiles](docs/resources/oneview_server_profile.md)
  - [Oneview Server Profile Connections](docs/resources/oneview_server_profile_connections.md)
 
  All of the documention is based on version `300` of the OneView API.

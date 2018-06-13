@@ -37,7 +37,7 @@ oneview_fc_network fc_network['name'] do
     autoLoginRedistribution: true,
     fabricType: 'FabricAttach'
   )
-  associated_san "#{fc_network['associated_san']}" unless fc_network['associated_san'].nil?
+  associated_san "#{fc_network['associated_san']}" unless fc_network['associated_san'].empty?
   only_if { fc_network['create'] }
 end
 

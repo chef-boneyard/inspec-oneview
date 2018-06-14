@@ -24,7 +24,7 @@ inspec exec inspec-oneview -t oneview://
 Alternatively, using the environment variable `INSPEC_ONEVIEW_SETTINGS`:
 
 ```bash
-INSPEC_ONEVIEW_SETTING"/path/to/another/file" inspec exec inspec-oneview
+INSPEC_ONEVIEW_SETTING"/path/to/another/file" inspec exec inspec-oneview -t oneview://
 ```
 
 ## Use the resources
@@ -88,7 +88,7 @@ The below resources are available pending resolution of some issues, [see notes 
 
 Our integration tests spin up resources in Oneview using a cookbook in local mode and the results are verified by InSpec. The `test/integration/verify/controls` directory contains all of the tests that are run during the integration tests. These can be used as examples of how to use this resource pack.
 
-In oder to run the integration tests both Berkshelf and chef-client are required. These will both be installed if you have ChefDK installed. 
+In order to run the integration tests both Berkshelf and chef-client are required. These will both be installed if you have ChefDK installed. 
 
 The cookbooks runs locally on your machine and remotes into the specified OneView environment using connection settings that are passed in as attributes.
 

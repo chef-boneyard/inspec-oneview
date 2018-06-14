@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-#require 'oneview-sdk'
 require 'inspec'
 
 # @!parse

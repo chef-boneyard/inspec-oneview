@@ -2,44 +2,26 @@
 
 # Getting Started
 
-This profile uses the Oneview SDK from HP to communicate with Oneview. As such itrequires configuration information, this is specified in a default file `~/.oneview/inspec` or it can be overridden using the environment variable `INSPEC_ONEVIEW_SETTINGS`.
+This profile requires the InSpec [HPE Oneview plugin](https://github.com/inspec/inspec-hpe-oneview) to be installed and configured. Test this is working via:
+```
+inspec-hpe-oneview spaterson$ bundle exec inspec detect -t oneview://
 
-## Settings File
+== Platform Details
 
-This file requires the following information:
-
-| Parameter | Description | Example Value |
-|---|---|---|
-| url | URL to the Oneview server | https://192.168.1.93 |
-| user | Username to connect to Onwview with | myuser |
-| password | Password associated with the specified user |
-| api_version | The API version to use. The default value is 200 | 300 |
-
-This file can be written out in JSON or YAML.
-
-```json
-{
-    "url": "https://192.168.1.93",
-    "user": "myuser",
-    "password": "12345",
-    "api_version": 300
-}
+Name:      oneview
+Families:  iaas, api
+Release:   oneview-v5.5.0
 ```
 
-```yaml
-url: https://192.168.1.93
-user: myuser
-password: 12345
-api_version: 300
-```
+Configuration information is specified in a default file `~/.oneview/inspec` or it can be overridden using the environment variable `INSPEC_ONEVIEW_SETTINGS`.
 
-So to run the profile now it is as simple as running:
+To to run the profile now it is as simple as running:
 
 ```bash
-inspec exec inspec-oneview
+inspec exec inspec-oneview -t oneview://
 ```
 
-A different settings file, with the same format, can be specified as an environment variable `INSPEC_ONEVIEW_SETTINGS`:
+Alternatively, using the environment variable `INSPEC_ONEVIEW_SETTINGS`:
 
 ```bash
 INSPEC_ONEVIEW_SETTING"/path/to/another/file" inspec exec inspec-oneview
@@ -47,7 +29,7 @@ INSPEC_ONEVIEW_SETTING"/path/to/another/file" inspec exec inspec-oneview
 
 ## Use the resources
 
-Since this is an InSpec resource pack, it only defines InSpec resources. It includes example tests only. To easily use the Oneview resources in your testsdo the following:
+Since this is an InSpec resource pack, it only defines InSpec resources. It includes example tests only. To easily use the Oneview resources in your tests do the following:
 
 ### Create a new profile
 
@@ -86,11 +68,14 @@ There are a few different ways in which tests can be written, which mean that ar
 
 The following resources are available in the InSpec Oneview Profile
 
- - [Oneview Ethernet Network](docs/resources/oneview_ethernet_network.md)
+ - [Oneview Ethernet Network](docs/resources/oneview_ethernet_network.md) 
+ - [Oneview FC Network](docs/resources/ineview_fc_network.md)
  - [Oneview Enclosure Group](docs/resources/oneview_enclosure_group.md)
+
+The below resources are available pending resolution of some issues, [see notes here](#important-integration-test-setup-limitation):
+
  - [Oneview Enclosure Group Bay Mappings](docs/resources/oneview_enclosure_group_bay_mappings.md)
  - [Oneview Enclosure Group Port Mappings](docs/resources/oneview_enclosure_group_port_mappings.md)
- - [Oneview FC Network](docs/resources/ineview_fc_network.md)
  - [Oneview Generic Resource](docs/resources/oneview_generic_resource.md) 
  - [Oneview Servers](docs/resources/oneview_servers.md)
  - [Oneview Server Profiles](docs/resources/oneview_server_profiles.md)
@@ -102,7 +87,8 @@ The following resources are available in the InSpec Oneview Profile
 
 Our integration tests spin up resources in Oneview using a cookbook in local mode and the results are verified by InSpec. The `test/integration/verify/controls` directory contains all of the tests that are run during the integration tests. These can be used as examples of how to use this resource pack.
 
-In oder to run the inetgration tests both Berkshelf and chef-client are required. These will both be installed if you have ChefDK installed.
+In oder to run the integration tests both Berkshelf and chef-client are required. These will both be installed if you have ChefDK installed. 
+
 The cookbooks runs locally on your machine and remotes into the specified OneView environment using connection settings that are passed in as attributes.
 
 As a minimum the attributes file that is passed to the test must have the following
@@ -112,7 +98,7 @@ As a minimum the attributes file that is passed to the test must have the follow
   "infrastructure": {
     "connection": {
       "url": "https://192.168.1.1",
-      "user": "my_user",
+      "username": "my_user",
       "password": "my_password",
       "api_version": 300,
       "ssl_enabled": false
@@ -141,6 +127,48 @@ thor test:cleanup --attributes local\infrastructure.json
 When Berkshelf is used to vendor the cookbooks they are placed into the `test/integration/build/vendor/cookbooks` directory.
 
 NOTE: `chef-client` expects to be run with admin privileges. So if running on MacOS or Linux please use `sudo` or if on Windows ensure the process is being run in an elevated PowerShell or Command Prompt. No changes will be made to your local system.
+
+## Chef DK Version
+
+This resource pack has been tested against ChefDK version 2.5.3.  This version is recommended for now to avoid dependency conflicts.  
+
+## IMPORTANT Integration Test Setup Limitation
+
+After live testing the following issues were discovered: 
+- [https://github.com/chef/inspec-oneview/issues/4](https://github.com/chef/inspec-oneview/issues/4)
+- [https://github.com/chef/inspec-oneview/issues/5](https://github.com/chef/inspec-oneview/issues/5)
+- [https://github.com/chef/inspec-oneview/issues/6](https://github.com/chef/inspec-oneview/issues/6)
+- [https://github.com/chef/inspec-oneview/issues/7](https://github.com/chef/inspec-oneview/issues/7)
+
+These issues make it impossible to automatically create the infrastructure required for all the controls.  As such the affected tests have been disabled pending the resolution of these issues.
+
+In the meantime, the following sample JSON is currently recommended to run the integration tests:
+```json
+{
+  "infrastructure": {
+    "connection": {
+      "url": "https://192.168.1.1",
+      "username": "my_user",
+      "password": "my_password",
+      "api_version": 300,
+      "ssl_enabled": false
+    },
+    "network" : {
+      "fc": {
+        "associated_san":""
+      }
+    },
+   "server_profile_template": {
+     "server_hardware_type":"SY 480 Gen10 1"
+   }    
+  }
+}
+```
+
+Please update the *server_hardware_type* field corresponding to your setup.  A test flag *inspec_oneview_disable_affected_tests* has been added such that InSpec will skip the tests known to fail due to the above.  This flag is disabled by default.
+
+
+# Example screen cast
 
 The following screen cast shows some of the integration tests being run against the HPE OneView Simulator.
 NOTE Some of the OneView resources have been modified using the WebUI so that enhanced testing of them can be performed. It is likely that this will display different output to what you would see if you run these tests now.

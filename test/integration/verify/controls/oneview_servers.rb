@@ -5,6 +5,7 @@ rom_version_attr = attribute('rom_version', default: 'I39 v1.30 08/26/2014', des
 mp_firmware_version_attr = attribute('mp_firwmare_version', default: '2.30 Jul 23 2015', description: 'Version of the firmware installed on the iLO')
 power_state_attr = attribute('power_state', default: 'On', description: 'Power state of the machines to look for')
 server_count = attribute('server_count', default: 14, description: 'Number of servers to check against')
+inspec_oneview_disable_affected_tests = attribute(:inspec_oneview_disable_affected_tests,default:1,description:'Flag to enable privileged resources requiring elevated privileges in GCP.')
 
 title 'OneView Servers'
 
@@ -12,6 +13,7 @@ control 'oneview-servers-1.0' do
   impact 1.0
   title 'Ensure that the servers in OneView are at the correct rom version'
 
+  only_if { inspec_oneview_disable_affected_tests.to_i == 0 }
   describe oneview_servers do
     its('category') { should cmp 'server-hardware' }
     its('total') { should > server_count }

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'oneview-sdk'
+#require 'oneview-sdk'
 require 'inspec'
 
 # @!parse
 # Base class from which all Inspec resources are derived.
 # This inherits from the Inspec resource
 class OneviewResourceBase < Inspec.resource(1)
-  attr_reader :opts, :client
+  attr_reader :opts, :client, :oneview
 
   # Constructor that retrievs a resource from Oneview
   #
@@ -26,19 +26,40 @@ class OneviewResourceBase < Inspec.resource(1)
 
     # Determine if the enviornment variables for the options have been set
     option_var_names = {
-      name: 'ONEVIEW_RESOURCE_NAME',
-      type: 'ONEVIEW_RESOURCE_TYPE',
+        name: 'ONEVIEW_RESOURCE_NAME',
+        type: 'ONEVIEW_RESOURCE_TYPE',
     }
     option_var_names.each do |option_name, env_var_name|
       opts[option_name] = ENV[env_var_name] unless ENV[env_var_name].nil?
     end
 
-    # Create the client using train Oneview transport
-    @client = inspec.backend
+    # Create the client
+    @oneview = inspec.backend
+    @client = oneview.oneview_client
   end
 
   def resources
-    client.resources
+    # Find the resources
+    resources = oneview.resources(opts[:type],opts[:name])
+
+    # process the resource differently based on whether there is one type of several returned
+    if resources.count == 1
+      @total = 1
+
+      # Create the dynamic methods for each of the attributes that have been returned
+      dm = OneviewResourceDynamicMethods.new
+      dm.create_methods(self, resources.first)
+    elsif resources.count > 1
+
+      # create dynamic methods for each of the attributes that have been returned
+      dm = OneviewResourceDynamicMethods.new
+      dm.create_methods(self, resources)
+
+      # now process the members of that have been returned
+      @probes = resources['members'].map do |item|
+        parse_resource(item)
+      end.compact
+    end
   end
 
   # Get the resource as referenced by the supplied uri
@@ -47,9 +68,9 @@ class OneviewResourceBase < Inspec.resource(1)
   # @param array filter Array of values that should be returned instead of the whole thing
   #
   # @return hash Hash of information about the target resource
-  def resource(uri, _filter = [])
-    response = client.oneview_client.rest_get(uri)
-    resource = client.oneview_client.response_handler(response)
+  def resource(uri, filter = [])
+    response = client.rest_get(uri)
+    resource = client.response_handler(response)
 
     resource
   end
@@ -120,7 +141,7 @@ class OneviewResourceDynamicMethods
         value
       end
     when 'Hash'
-      value.count.zero? ? return_value = value : return_value = OneviewResourceProbe.new(value)
+      value.count == 0 ? return_value = value : return_value = OneviewResourceProbe.new(value)
       object.define_singleton_method name do
         return_value
       end

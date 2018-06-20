@@ -1,50 +1,11 @@
 # frozen_string_literal: true
-
-require 'oneview-sdk'
 require 'inspec'
-
-# Class to manage the connection to Oneview to retrieve information about the resources
-#
-# @author Russell Seymour
-class OneviewConnection
-  attr_reader :config
-
-  # Constructor that reads the configuration file
-  def initialize
-    # If the INSPEC_ONEVIEW_SETTINGS environment has been specifid set the
-    # settings file accordingly, otherwise set to the default
-    oneview_settings_file = ENV['INSPEC_ONEVIEW_SETTINGS']
-    if oneview_settings_file.nil?
-
-      # The environment var has not been set so set to the default location
-      oneview_settings_file = File.join(Dir.home, '.oneview', 'inspec')
-    end
-
-    # Ensure that the settings file exists
-    if File.file?(oneview_settings_file)
-      @config = OneviewSDK::Config.load(oneview_settings_file)
-    else
-      @config = nil
-      abort format('%s was not found or is not accessible', oneview_settings_file)
-    end
-  end
-
-  # Connect to OneView using the specified configuration file
-  #
-  # @author Russell Seymour
-  def client
-    return @client if defined?(@client)
-
-    # Create the client using the SDK
-    @client = OneviewSDK::Client.new(config)
-  end
-end
 
 # @!parse
 # Base class from which all Inspec resources are derived.
 # This inherits from the Inspec resource
 class OneviewResourceBase < Inspec.resource(1)
-  attr_reader :opts, :client
+  attr_reader :opts, :client, :oneview
 
   # Constructor that retrievs a resource from Oneview
   #
@@ -63,32 +24,21 @@ class OneviewResourceBase < Inspec.resource(1)
 
     # Determine if the enviornment variables for the options have been set
     option_var_names = {
-      name: 'ONEVIEW_RESOURCE_NAME',
-      type: 'ONEVIEW_RESOURCE_TYPE',
+        name: 'ONEVIEW_RESOURCE_NAME',
+        type: 'ONEVIEW_RESOURCE_TYPE',
     }
     option_var_names.each do |option_name, env_var_name|
       opts[option_name] = ENV[env_var_name] unless ENV[env_var_name].nil?
     end
 
-    # Create a connection to Onvewiew
-    oneview = OneviewConnection.new
-
     # Create the client
-    @client = oneview.client
+    @oneview = inspec.backend
+    @client = oneview.oneview_client
   end
 
   def resources
-    # Determine the endpoint that needs to be called
-    endpoint = format('/rest/%s', opts[:type])
-
     # Find the resources
-    response = client.rest_get(endpoint)
-    resources = client.response_handler(response)
-
-    # Filter the resources by the name if it has been specified
-    unless opts[:name].nil?
-      resources = resources['members'].select { |r| r['name'] == opts[:name] }
-    end
+    resources = oneview.resources(opts[:type],opts[:name])
 
     # process the resource differently based on whether there is one type of several returned
     if resources.count == 1

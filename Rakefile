@@ -80,8 +80,8 @@ namespace :test do
 
   task :run_integration_tests do
     puts "----> Run"
-
-    cmd = format("chef exec inspec exec %s/verify", integration_tests_dir)
+    # now relies on bundle installed inspec
+    cmd = format("bundle exec inspec exec %s/verify", integration_tests_dir)
     sh(cmd)
   end
 

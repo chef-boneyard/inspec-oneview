@@ -5,6 +5,7 @@ boot_order = attribute('boot_order', default: 'HardDisk')
 template_compliance = attribute('template_compliance', default: 'Compliant')
 enclosure_bay = attribute('enclosure_bay', default: 1)
 boot_mode = attribute('boot_mode', default: 'UEFIOptimized')
+inspec_oneview_disable_affected_tests = attribute(:inspec_oneview_disable_affected_tests,default:1,description:'Flag to enable privileged resources requiring elevated privileges in GCP.')
 
 title 'OneView Server Profile'
 
@@ -12,6 +13,7 @@ control 'oneview-server-profile-1.0' do
   impact 1.0
   title 'Ensure that the specified profile is configured correctly'
 
+  only_if { inspec_oneview_disable_affected_tests.to_i == 0 }
   describe oneview_server_profile(name: server_profile_name) do
     it { should_not have_managed_bios }
     it { should_not have_bios_overrides }

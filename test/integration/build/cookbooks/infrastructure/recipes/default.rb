@@ -37,7 +37,7 @@ oneview_fc_network fc_network['name'] do
     autoLoginRedistribution: true,
     fabricType: 'FabricAttach'
   )
-  associated_san "#{fc_network['associated_san']}" unless fc_network['associated_san'].nil?
+  associated_san "#{fc_network['associated_san']}" unless fc_network['associated_san'].empty?
   only_if { fc_network['create'] }
 end
 
@@ -129,9 +129,7 @@ oneview_enclosure_group eg['name'] do
     interconnectBayMappingCount: 6,
     ipAddressingMode: 'DHCP'
   )
-  logical_interconnect_groups [
-    { name: "#{lig_ethernet['name']}", enclosureIndex: "#{lig_ethernet['enclosure_index']}" }
-  ]
+  logical_interconnect_groups ["#{lig_ethernet['name']}"]
   only_if { eg['create'] }
 end
 

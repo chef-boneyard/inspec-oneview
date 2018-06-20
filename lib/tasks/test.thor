@@ -1,5 +1,5 @@
 class Test < Thor
-  attr_reader :integration_tests_dir, :vendor_dir, :infrastructure_cookbook_dir
+  attr_reader :integration_tests_dir, :vendor_dir, :infrastructure_cookbook_dir, :attributes_dir
 
   def initialize(*args)
     super
@@ -7,6 +7,7 @@ class Test < Thor
     @integration_tests_dir = File.join(File.dirname(__FILE__), '..', '..', 'test', 'integration')
     @infrastructure_cookbook_dir = File.join(integration_tests_dir, 'build', 'cookbooks', 'infrastructure')
     @vendor_dir = File.join(integration_tests_dir, 'build', 'vendor')
+    @attributes_dir = File.join(File.dirname(__FILE__), '..', '..')
 
     # Ensure that the necessary binaries are available
     berks = which('berks')
@@ -49,7 +50,8 @@ class Test < Thor
   desc 'execute', 'Run the integration tests'
   def execute
     say '----> Executing Tests', :green
-    cmd = format('chef exec inspec exec %s/verify', integration_tests_dir)
+    # now relies on bundle installed inspec
+    cmd = format('bundle exec inspec exec %s/verify -t oneview:// --attrs %s/inspec-attributes.yml; rc=$?; if [ $rc -eq 0 ] || [ $rc -eq 101 ]; then exit 0; else exit 1; fi', integration_tests_dir, attributes_dir)
     result = `#{cmd}`
     say result
   end

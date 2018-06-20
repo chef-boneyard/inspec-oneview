@@ -1,9 +1,12 @@
 title 'OneView Enclsoure Group'
 
+inspec_oneview_disable_affected_tests = attribute(:inspec_oneview_disable_affected_tests,default:1,description:'Flag to enable privileged resources requiring elevated privileges in GCP.')
+
 control 'oneview-enclosure-group-1.0' do
   impact 1.0
   title 'Ensure that the Enclosure Group is configured correctly'
 
+  only_if { inspec_oneview_disable_affected_tests.to_i == 0 }
   describe oneview_enclosure_group(name: 'InSpec-Enclosure-Group') do
     it { should have_associated_logical_interconnect_groups }
     it { should_not have_managed_os_deployment }

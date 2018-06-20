@@ -129,9 +129,7 @@ oneview_enclosure_group eg['name'] do
     interconnectBayMappingCount: 6,
     ipAddressingMode: 'DHCP'
   )
-  logical_interconnect_groups [
-    { name: "#{lig_ethernet['name']}", enclosureIndex: "#{lig_ethernet['enclosure_index']}" }
-  ]
+  logical_interconnect_groups ["#{lig_ethernet['name']}"]
   only_if { eg['create'] }
 end
 

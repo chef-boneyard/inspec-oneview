@@ -34,6 +34,6 @@ control 'oneview-generic-enclosure-group-1.0' do
     its('osDeploymentSettings.manageOSDeployment') { should be false }
 
     its('enclosureCount') { should be 1 }
-    its('associatedLogicalInterconnectGroups.length') { should be 0 }
+    its('associatedLogicalInterconnectGroups.length') { should be 1 }
   end
 end

@@ -71,13 +71,13 @@ The following resources are available in the InSpec Oneview Profile
  - [Oneview Ethernet Network](docs/resources/oneview_ethernet_network.md) 
  - [Oneview FC Network](docs/resources/oneview_fc_network.md)
  - [Oneview Enclosure Group](docs/resources/oneview_enclosure_group.md)
+ - [Oneview FC Network](docs/resources/oneview_fc_network.md)
+ - [Oneview Generic Resource](docs/resources/oneview_generic_resource.md) 
 
 The below resources are available pending resolution of some issues, [see notes here](#important-integration-test-setup-limitation):
 
  - [Oneview Enclosure Group Bay Mappings](docs/resources/oneview_enclosure_group_interconnect_bay_mappings.md)
  - [Oneview Enclosure Group Port Mappings](docs/resources/oneview_enclosure_group_port_mappings.md)
- - [Oneview FC Network](docs/resources/oneview_fc_network.md)
- - [Oneview Generic Resource](docs/resources/oneview_generic_resource.md) 
  - [Oneview Servers](docs/resources/oneview_servers.md)
  - [Oneview Server Profiles](docs/resources/oneview_server_profile.md)
  - [Oneview Server Profile Connections](docs/resources/oneview_server_profile_connections.md)
@@ -136,7 +136,7 @@ This resource pack has been tested against ChefDK version 2.5.3.  This version i
 ## IMPORTANT Integration Test Setup Limitation
 
 After live testing the following issues were discovered: 
-- [https://github.com/chef/inspec-oneview/issues/4](https://github.com/chef/inspec-oneview/issues/4)
+- [https://github.com/chef/inspec-oneview/issues/4](https://github.com/chef/inspec-oneview/issues/4) - seems to be resolved now 
 - [https://github.com/chef/inspec-oneview/issues/5](https://github.com/chef/inspec-oneview/issues/5)
 - [https://github.com/chef/inspec-oneview/issues/6](https://github.com/chef/inspec-oneview/issues/6)
 - [https://github.com/chef/inspec-oneview/issues/7](https://github.com/chef/inspec-oneview/issues/7)

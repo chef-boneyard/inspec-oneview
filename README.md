@@ -24,7 +24,7 @@ inspec exec inspec-oneview -t oneview://
 Alternatively, using the environment variable `INSPEC_ONEVIEW_SETTINGS`:
 
 ```bash
-INSPEC_ONEVIEW_SETTING"/path/to/another/file" inspec exec inspec-oneview -t oneview://
+INSPEC_ONEVIEW_SETTINGS="/path/to/another/file" inspec exec inspec-oneview -t oneview://
 ```
 
 ## Use the resources

@@ -64,6 +64,16 @@ end
 
 There are a few different ways in which tests can be written, which mean that arrays can be tested. A lot of the different ways and techniques are shown and documented in the integrations tests which are highly recommended reading.
 
+### Running the profile
+
+From the profile root directory, the following command will execute the controls:
+
+```
+$ inspec exec . -t oneview://
+```
+
+The `-t  oneview://` is very important as it instructs InSpec to use the [Oneview transport layer](https://github.com/inspec/inspec-hpe-oneview).
+
 ### Available Resources
 
 The following resources are available in the InSpec Oneview Profile
